@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AutoBot Academy">
+<meta name="theme-color" content="#0a0c12">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>AutoBot Academy — KS2 Battle Trainer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+:root{
+  --bg1:#0a0c12;--bg2:#0f1219;--bg3:#141822;--bg4:#1a1f2e;
+  --metal:#2a3040;--metal2:#1e2230;--metal-hi:#3a4258;
+  --blue:#00a8ff;--blue2:#0077cc;--blue-g:rgba(0,168,255,.15);--blue-b:rgba(0,168,255,.3);--blue-glow:0 0 15px rgba(0,168,255,.3);
+  --red:#ff2d40;--red2:#cc1a2d;--red-g:rgba(255,45,64,.12);--red-b:rgba(255,45,64,.3);--red-glow:0 0 15px rgba(255,45,64,.3);
+  --gold:#ffc940;--gold2:#e6a800;--gold-g:rgba(255,201,64,.1);--gold-b:rgba(255,201,64,.25);
+  --green:#00e676;--green-g:rgba(0,230,118,.12);--green-b:rgba(0,230,118,.3);
+  --energon:#00e5ff;--energon-g:rgba(0,229,255,.08);
+  --txt:#d8dce8;--txt2:#8891a8;--txt3:#555d72;--txt4:#3a4050;
+  --glass:rgba(255,255,255,.04);--glass2:rgba(255,255,255,.07);--glass-b:rgba(255,255,255,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg1);color:var(--txt);min-height:100vh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+h1,h2,h3,.tf{font-family:'Orbitron',monospace}
+
+/* GRID BACKGROUND */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(0,168,255,.03) 59px,rgba(0,168,255,.03) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(0,168,255,.03) 59px,rgba(0,168,255,.03) 60px);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,168,255,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+.ct{max-width:500px;margin:0 auto;padding:14px 14px 36px;position:relative;z-index:1}
+.scr{display:none}.scr.on{display:block}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px var(--blue-b)}50%{box-shadow:0 0 20px var(--blue-b),0 0 40px rgba(0,168,255,.1)}}
+@keyframes energonPulse{0%,100%{opacity:.3}50%{opacity:.8}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@keyframes breatheCirc{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.2);opacity:1}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes damage{0%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.95)}100%{opacity:1;transform:scale(1)}}
+@keyframes buildIn{from{opacity:0;transform:scale(0) rotate(-30deg)}to{opacity:1;transform:scale(1) rotate(0deg)}}
+
+.anim{animation:fadeUp .4s ease both}
+.anim-d1{animation:fadeUp .4s ease .06s both}
+.anim-d2{animation:fadeUp .4s ease .12s both}
+.anim-d3{animation:fadeUp .4s ease .18s both}
+.anim-d4{animation:fadeUp .4s ease .24s both}
+
+/* ANGULAR CLIP SHAPES */
+.clip-ang{clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+.clip-top{clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
+
+/* BUTTONS */
+.btn-prime{
+  background:linear-gradient(135deg,var(--blue),var(--blue2));border:1px solid var(--blue-b);color:#fff;
+  padding:14px 28px;border-radius:4px;font-family:'Orbitron';font-size:13px;font-weight:700;
+  cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .15s;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+}
+.btn-prime:active{transform:scale(.95);filter:brightness(1.2)}
+.btn-red{
+  background:linear-gradient(135deg,var(--red),var(--red2));border:1px solid var(--red-b);color:#fff;
+  padding:14px 28px;border-radius:4px;font-family:'Orbitron';font-size:13px;font-weight:700;
+  cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .15s;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+}
+.btn-red:active{transform:scale(.95)}
+.btn-ghost{
+  background:var(--glass2);border:1px solid var(--glass-b);color:var(--txt);
+  padding:14px 28px;border-radius:4px;font-family:'Rajdhani';font-size:14px;font-weight:600;
+  cursor:pointer;transition:all .15s;
+}
+.btn-ghost:active{transform:scale(.95)}
+.btn-energon{
+  background:var(--energon-g);border:1px solid rgba(0,229,255,.2);color:var(--energon);
+  padding:11px 22px;border-radius:4px;font-family:'Orbitron';font-size:11px;font-weight:600;
+  cursor:pointer;letter-spacing:.5px;text-transform:uppercase;transition:all .15s;
+}
+.btn-energon:active{transform:scale(.94)}
+
+/* NAV */
+.nav{position:absolute;top:14px;left:12px;background:var(--metal2);border:1px solid var(--glass-b);color:var(--txt);width:40px;height:40px;border-radius:4px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2}
+.nav:active{transform:scale(.9)}
+.nav-r{position:absolute;top:14px;right:12px}
+
+/* HEADER */
+.hdr{text-align:center;padding-top:8px;margin-bottom:14px}
+.hdr-icon{font-size:36px;margin-bottom:4px;display:block}
+.hdr-title{font-family:'Orbitron';font-size:22px;font-weight:900;letter-spacing:2px;color:var(--blue);text-shadow:var(--blue-glow);line-height:1.3}
+.hdr-sub{font-size:13px;color:var(--txt2);margin-top:3px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+
+/* STATS BAR */
+.stats{
+  display:flex;justify-content:center;align-items:center;gap:10px;
+  margin:10px 0 14px;padding:9px 12px;background:var(--metal2);
+  border:1px solid var(--glass-b);border-radius:4px;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+}
+.stat{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;font-family:'Orbitron';letter-spacing:.5px}
+.stat-d{width:1px;height:14px;background:var(--txt4)}
+
+/* OPTIMUS SPEECH */
+.op-wrap{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;animation:fadeUp .4s ease both}
+.op-avatar{width:48px;height:48px;background:linear-gradient(135deg,var(--blue),var(--blue2));border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;border:1px solid var(--blue-b);clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))}
+.op-bubble{
+  flex:1;background:var(--metal2);border:1px solid var(--blue-b);border-radius:4px;
+  padding:12px 14px;position:relative;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+}
+.op-name{font-family:'Orbitron';font-size:10px;color:var(--blue);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.op-text{font-size:14px;line-height:1.6;font-weight:500}
+.op-audio{margin-top:8px;display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--energon);cursor:pointer;font-weight:600}
+.op-audio:active{opacity:.6}
+
+/* MISSION CARDS */
+.sec{font-family:'Orbitron';font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin:18px 0 8px}
+.mission{
+  background:var(--metal2);border:1px solid var(--glass-b);border-radius:4px;
+  padding:14px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;
+  position:relative;overflow:hidden;transition:transform .15s;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+}
+.mission:active{transform:scale(.97)}
+.mission::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.m-math::before{background:var(--blue)}
+.m-eng::before{background:var(--gold)}
+.m-sci::before{background:var(--green)}
+.m-hist::before{background:var(--red)}
+.m-geo::before{background:#a855f7}
+.m-icon{font-size:28px;flex-shrink:0}
+.m-info{flex:1}
+.m-name{font-family:'Orbitron';font-size:13px;font-weight:700;letter-spacing:.5px}
+.m-sub{font-size:12px;color:var(--txt2);margin-top:2px;font-weight:500}
+.m-enemy{font-size:11px;color:var(--red);margin-top:3px;font-weight:600}
+.m-done{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:10px;font-family:'Orbitron';font-weight:700;color:var(--green);letter-spacing:1px;background:var(--green-g);padding:3px 8px;border:1px solid var(--green-b);border-radius:3px}
+
+/* BATTLE SCREEN */
+.battle-hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px}
+.fighter{flex:1;text-align:center;padding:10px 8px;background:var(--metal2);border-radius:4px;border:1px solid var(--glass-b)}
+.fighter-icon{font-size:32px;display:block;margin-bottom:4px}
+.fighter-name{font-family:'Orbitron';font-size:10px;font-weight:700;letter-spacing:1px}
+.hp-bar{height:6px;background:var(--bg1);border-radius:3px;margin-top:6px;overflow:hidden}
+.hp-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.hp-auto{background:linear-gradient(90deg,var(--blue),var(--energon))}
+.hp-decepticon{background:linear-gradient(90deg,var(--red),#ff6b6b)}
+.vs{font-family:'Orbitron';font-size:16px;font-weight:900;color:var(--red);text-shadow:var(--red-glow);flex-shrink:0}
+
+.qcard{background:var(--metal2);border:1px solid var(--glass-b);border-radius:4px;padding:22px 16px;margin-bottom:12px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.qcount{font-family:'Orbitron';font-size:10px;color:var(--txt3);text-align:center;margin-bottom:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.qtext{font-family:'Rajdhani';font-size:18px;font-weight:700;text-align:center;line-height:1.5;margin-bottom:18px}
+
+.obtn{
+  width:100%;padding:13px 14px;border-radius:4px;
+  background:var(--glass);border:1px solid var(--glass-b);
+  color:var(--txt);font-size:15px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:6px;font-family:'Rajdhani';
+  transition:all .2s;display:flex;align-items:center;gap:8px;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+}
+.obtn:active{transform:scale(.97)}
+.olet{font-family:'Orbitron';opacity:.3;font-size:11px;font-weight:700;min-width:14px}
+.obtn.ok{background:var(--green-g);border:2px solid var(--green-b)}
+.obtn.no{background:var(--red-g);border:2px solid var(--red-b);animation:shake .3s ease}
+.obtn.dis{pointer-events:none}
+
+.hint-btn{background:var(--gold-g);border:1px solid var(--gold-b);color:var(--gold);padding:9px 18px;border-radius:4px;font-family:'Orbitron';font-size:10px;font-weight:700;cursor:pointer;display:block;margin:6px auto 0;letter-spacing:.5px;text-transform:uppercase}
+.hint-btn:active{transform:scale(.94)}
+.hint-box{background:rgba(255,201,64,.04);border:1px solid rgba(255,201,64,.12);border-radius:4px;padding:10px 12px;font-size:13px;color:var(--gold);text-align:center;margin-top:8px;line-height:1.5;animation:fadeUp .3s ease}
+
+.fb{text-align:center;font-size:14px;font-weight:700;margin-top:10px;padding:10px 12px;border-radius:4px;animation:fadeUp .3s ease;line-height:1.5}
+.fb-ok{background:var(--green-g);color:var(--green)}
+.fb-no{background:var(--red-g);color:#ffa5a5}
+.fb-ans{margin-top:4px;font-size:12px;opacity:.8;font-weight:600}
+
+/* COACHING PANEL */
+.coach{background:var(--metal2);border:1px solid var(--blue-b);border-radius:4px;padding:12px 14px;margin-top:10px;animation:slideIn .4s ease both}
+.coach-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.coach-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--blue),var(--blue2));border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:16px;border:1px solid var(--blue-b)}
+.coach-name{font-family:'Orbitron';font-size:9px;color:var(--blue);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.coach-txt{font-size:13px;line-height:1.6;color:var(--txt);font-weight:500}
+
+/* RESULTS */
+.rcard{background:var(--metal2);border:1px solid var(--glass-b);border-radius:4px;padding:30px 20px;text-align:center;margin-top:20px;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+.remoji{font-size:40px;margin-bottom:8px;display:block}
+.rtitle{font-family:'Orbitron';font-size:20px;font-weight:900;margin-bottom:3px;letter-spacing:1px}
+.rplanet{font-size:12px;color:var(--txt2);margin-bottom:16px;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.score-ring{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:2px solid var(--glass-b)}
+.score-inner{width:96px;height:96px;border-radius:50%;background:var(--bg1);display:flex;align-items:center;justify-content:center;flex-direction:column}
+.score-num{font-family:'Orbitron';font-size:30px;font-weight:900;color:var(--blue)}
+.score-lbl{font-size:10px;color:var(--txt3);font-weight:700;font-family:'Orbitron'}
+.adots{display:flex;gap:4px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+.adot{width:30px;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.adot-ok{background:var(--green-g);border:1px solid var(--green-b);color:var(--green)}
+.adot-no{background:var(--red-g);border:1px solid var(--red-b);color:var(--red)}
+
+/* TRANSFORMER BUILDER */
+.build-area{margin:16px 0;text-align:center}
+.build-bot{font-size:64px;display:block;margin-bottom:8px;animation:buildIn .6s ease both}
+.build-label{font-family:'Orbitron';font-size:11px;color:var(--energon);letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.build-name{font-family:'Orbitron';font-size:16px;font-weight:800;margin-top:4px;color:var(--gold)}
+.parts-grid{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.part{width:48px;height:48px;background:var(--metal);border:1px solid var(--glass-b);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:22px;transition:all .3s}
+.part.earned{border-color:var(--energon);background:var(--energon-g);animation:glow 2s ease-in-out infinite}
+.part.locked{opacity:.25;filter:grayscale(1)}
+
+/* LEADERBOARD */
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--metal2);border:1px solid var(--glass-b);border-radius:4px;margin-bottom:6px;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))}
+.lb-rank{font-family:'Orbitron';font-size:14px;font-weight:900;min-width:24px;text-align:center}
+.lb-rank.gold{color:var(--gold)}
+.lb-rank.silver{color:#c0c0c0}
+.lb-rank.bronze{color:#cd7f32}
+.lb-icon{font-size:24px}
+.lb-info{flex:1}
+.lb-name{font-family:'Orbitron';font-size:12px;font-weight:700;letter-spacing:.5px}
+.lb-score{font-size:11px;color:var(--txt2)}
+.lb-pts{font-family:'Orbitron';font-size:14px;font-weight:800;color:var(--blue)}
+
+/* MINI GAME */
+.mg-card{background:var(--metal2);border:1px solid var(--blue-b);border-radius:4px;padding:16px;margin-bottom:10px;cursor:pointer;text-align:center;transition:transform .15s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.mg-card:active{transform:scale(.97)}
+.mg-icon{font-size:32px;margin-bottom:6px;display:block}
+.mg-name{font-family:'Orbitron';font-size:13px;font-weight:700;letter-spacing:.5px}
+.mg-desc{font-size:12px;color:var(--txt2);margin-top:3px}
+
+/* SPEED ROUND */
+.speed-timer{font-family:'Orbitron';font-size:36px;font-weight:900;text-align:center;color:var(--energon);text-shadow:0 0 20px rgba(0,229,255,.3);margin-bottom:12px}
+.speed-score{font-family:'Orbitron';font-size:14px;color:var(--gold);text-align:center;margin-bottom:16px;letter-spacing:1px}
+.speed-q{font-size:22px;font-weight:700;text-align:center;margin-bottom:16px;font-family:'Rajdhani'}
+.speed-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.speed-btn{
+  padding:16px;background:var(--glass2);border:1px solid var(--glass-b);border-radius:4px;
+  font-size:18px;font-weight:700;font-family:'Rajdhani';color:var(--txt);cursor:pointer;
+  text-align:center;transition:all .15s;
+}
+.speed-btn:active{transform:scale(.95)}
+.speed-btn.ok{background:var(--green-g);border-color:var(--green-b);color:var(--green)}
+.speed-btn.no{background:var(--red-g);border-color:var(--red-b);color:var(--red)}
+
+/* BREATHE / ENERGON RECHARGE */
+.breathe-ov{position:fixed;inset:0;background:rgba(10,12,18,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:90;padding:20px;animation:fadeIn .5s ease}
+.breathe-circle{width:110px;height:110px;border-radius:50%;border:2px solid var(--blue-b);background:radial-gradient(circle,rgba(0,168,255,.15) 0%,transparent 70%);animation:breatheCirc 4s ease-in-out infinite;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.breathe-icon{font-size:36px}
+.breathe-txt{font-family:'Orbitron';font-size:18px;color:var(--blue);text-align:center;margin-bottom:4px;letter-spacing:1px}
+.breathe-sub{font-size:14px;color:var(--txt2);text-align:center;margin-bottom:24px;line-height:1.6;max-width:300px}
+
+/* BADGES */
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bcard{border-radius:4px;padding:14px 10px;text-align:center;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))}
+.bcard-on{background:var(--gold-g);border:1px solid var(--gold-b)}
+.bcard-off{background:var(--glass);border:1px solid rgba(255,255,255,.03);opacity:.3}
+.bcicon{font-size:28px;margin-bottom:4px;display:block}
+.bcicon-off{filter:grayscale(1)}
+.bcname{font-family:'Orbitron';font-size:10px;font-weight:700;margin-bottom:2px;letter-spacing:.5px}
+.bcname-on{color:var(--gold)}
+.bcdesc{font-size:10px;color:var(--txt3);line-height:1.4}
+
+.popup-ov{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;animation:fadeIn .3s ease}
+.popup-c{background:linear-gradient(145deg,var(--bg3),var(--bg2));border:2px solid var(--blue-b);border-radius:4px;padding:34px 24px;text-align:center;max-width:300px;width:100%;animation:scaleIn .4s ease;box-shadow:0 0 40px rgba(0,168,255,.15);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+.popup-i{font-size:48px;margin-bottom:10px;display:block}
+.popup-t{font-family:'Orbitron';font-size:16px;font-weight:800;color:var(--blue);margin-bottom:4px;letter-spacing:1px}
+.popup-n{font-size:16px;font-weight:700;margin-bottom:3px}
+.popup-d{font-size:12px;color:var(--txt2);margin-bottom:18px}
+
+.footer{text-align:center;font-size:10px;color:var(--txt4);margin-top:22px;letter-spacing:.5px}
+</style>
+</head>
+<body>
+
+<!-- ===== HOME ===== -->
+<div class="scr on" id="s-home"><div class="ct">
+  <div style="position:relative">
+    <button class="nav nav-r" style="background:var(--gold-g);border-color:var(--gold-b);color:var(--gold)" onclick="go('badges')">🏆</button>
+    <button class="nav" style="left:auto;right:56px;background:var(--blue-g);border-color:var(--blue-b);color:var(--blue)" onclick="go('leaderboard')">📊</button>
+  </div>
+  <div class="hdr anim">
+    <span class="hdr-icon">⚔️</span>
+    <div class="hdr-title">AUTOBOT<br>ACADEMY</div>
+    <div class="hdr-sub">KS2 Battle Trainer</div>
+  </div>
+  <div class="stats anim-d1">
+    <div class="stat">🔥 <span id="hs">1</span></div><div class="stat-d"></div>
+    <div class="stat">⭐ <span id="hc">0</span></div><div class="stat-d"></div>
+    <div class="stat">🏆 <span id="hb">0</span></div><div class="stat-d"></div>
+    <div class="stat">⚡ <span id="hl">1</span></div>
+  </div>
+
+  <div class="op-wrap anim-d2">
+    <div class="op-avatar">🤖</div>
+    <div class="op-bubble">
+      <div class="op-name">Optimus Prime</div>
+      <div class="op-text" id="home-msg">Autobots, the Decepticons have taken control of the Knowledge Sectors. We need you to fight back — one question at a time. Choose your mission, soldier.</div>
+      <div class="op-audio" onclick="speak(document.getElementById('home-msg').textContent)">🔊 Tap to hear</div>
+    </div>
+  </div>
+
+  <div class="sec anim-d2">⚔️ Battle Missions</div>
+  <div id="missions"></div>
+
+  <div class="sec anim-d3">⚡ Quick Challenges</div>
+  <div class="mg-card" onclick="startSpeed()"><span class="mg-icon">⚡</span><div class="mg-name">Energon Speed Round</div><div class="mg-desc">30 seconds — how many can you get right?</div></div>
+  <div class="mg-card" onclick="startDecode()"><span class="mg-icon">🔓</span><div class="mg-name">Decode the Signal</div><div class="mg-desc">Unscramble the Decepticon messages</div></div>
+
+  <div class="sec anim-d4" id="bot-sec" style="display:none">🤖 Your Transformer</div>
+  <div id="my-bot"></div>
+
+  <div class="footer">Aligned to KS2 National Curriculum • SATs Preparation</div>
+</div></div>
+
+<!-- ===== TEACH ===== -->
+<div class="scr" id="s-teach"><div class="ct">
+  <button class="nav" onclick="go('home')">←</button>
+  <div style="padding-top:48px">
+    <div class="op-wrap"><div class="op-avatar">🤖</div><div class="op-bubble">
+      <div class="op-name">Optimus Prime — Mission Briefing</div>
+      <div class="op-text" id="teach-msg"></div>
+      <div class="op-audio" onclick="speak(document.getElementById('teach-msg').textContent)">🔊 Tap to hear</div>
+    </div></div>
+  </div>
+  <div id="teach-content"></div>
+  <div style="text-align:center;margin-top:16px">
+    <button class="btn-prime" onclick="startBattle()">ENGAGE THE ENEMY ⚔️</button><br>
+    <button class="btn-energon" style="margin-top:8px" onclick="showBreathe('before')">ENERGON RECHARGE FIRST 🔋</button>
+  </div>
+</div></div>
+
+<!-- ===== BATTLE ===== -->
+<div class="scr" id="s-battle"><div class="ct">
+  <button class="nav" onclick="exitBattle()">←</button>
+  <div style="padding-top:44px">
+    <div class="battle-hud" id="battle-hud"></div>
+    <div class="q-progress" id="b-prog" style="display:flex;gap:4px;justify-content:center;margin-bottom:12px"></div>
+    <div class="qcard">
+      <div class="qcount" id="b-cnt"></div>
+      <div class="qtext" id="b-txt"></div>
+      <div id="b-opts"></div>
+      <div id="b-hint"></div>
+      <div id="b-fb"></div>
+    </div>
+    <div id="b-coach" style="display:none"></div>
+  </div>
+</div></div>
+
+<!-- ===== RESULTS ===== -->
+<div class="scr" id="s-results"><div class="ct">
+  <div class="rcard anim">
+    <span class="remoji" id="r-emoji"></span>
+    <div class="rtitle" id="r-title"></div>
+    <div class="rplanet" id="r-sub"></div>
+    <div class="score-ring" id="r-ring"><div class="score-inner"><div class="score-num" id="r-num"></div><div class="score-lbl" id="r-lbl"></div></div></div>
+    <div class="adots" id="r-dots"></div>
+    <div class="op-wrap" style="text-align:left"><div class="op-avatar">🤖</div><div class="op-bubble">
+      <div class="op-name">Optimus Prime</div>
+      <div class="op-text" id="r-op"></div>
+      <div class="op-audio" onclick="speak(document.getElementById('r-op').textContent)">🔊 Tap to hear</div>
+    </div></div>
+    <div id="r-part"></div>
+    <div style="margin-top:14px"><button class="btn-prime" id="r-retry">RETRY MISSION</button> <button class="btn-ghost" onclick="go('home')">🏠 BASE</button></div>
+  </div>
+</div></div>
+
+<!-- ===== SPEED ROUND ===== -->
+<div class="scr" id="s-speed"><div class="ct">
+  <button class="nav" onclick="endSpeed()">←</button>
+  <div style="padding-top:48px;text-align:center">
+    <div class="speed-timer" id="sp-timer">30</div>
+    <div class="speed-score" id="sp-score">SCORE: 0</div>
+    <div class="speed-q" id="sp-q"></div>
+    <div class="speed-opts" id="sp-opts"></div>
+  </div>
+</div></div>
+
+<!-- ===== DECODE ===== -->
+<div class="scr" id="s-decode"><div class="ct">
+  <button class="nav" onclick="go('home')">←</button>
+  <div style="padding-top:48px;text-align:center">
+    <div class="hdr-title" style="font-size:16px;margin-bottom:12px">🔓 DECODE THE SIGNAL</div>
+    <div class="op-wrap"><div class="op-avatar">🤖</div><div class="op-bubble">
+      <div class="op-name">Optimus Prime</div>
+      <div class="op-text">The Decepticons have scrambled these words. Unscramble them to decode the message!</div>
+    </div></div>
+    <div id="decode-area"></div>
+    <div id="decode-fb" style="margin-top:12px"></div>
+  </div>
+</div></div>
+
+<!-- ===== LEADERBOARD ===== -->
+<div class="scr" id="s-leaderboard"><div class="ct">
+  <button class="nav" onclick="go('home')">←</button>
+  <div style="padding-top:48px">
+    <div class="hdr"><span class="hdr-icon">📊</span><div class="hdr-title" style="font-size:18px">TEAM RANKINGS</div><div class="hdr-sub">Battle Performance</div></div>
+    <div id="lb-content"></div>
+  </div>
+</div></div>
+
+<!-- ===== BADGES ===== -->
+<div class="scr" id="s-badges"><div class="ct">
+  <button class="nav" onclick="go('home')">←</button>
+  <div style="padding-top:48px">
+    <div class="hdr"><span class="hdr-icon">🏆</span><div class="hdr-title" style="font-size:18px">ACHIEVEMENTS</div>
+    <div class="hdr-sub" id="b-cnt2"></div>
+    <div style="height:6px;background:var(--metal);border-radius:3px;margin:12px 0;overflow:hidden"><div id="b-fill" style="height:100%;background:linear-gradient(90deg,var(--gold),var(--red));border-radius:3px;transition:width .6s"></div></div></div>
+    <div class="bgrid" id="b-grid"></div>
+    <div style="text-align:center;margin-top:18px"><button class="btn-prime" onclick="go('home')">BACK TO BASE</button></div>
+  </div>
+</div></div>
+
+<!-- BREATHE -->
+<div class="breathe-ov" id="breathe" style="display:none">
+  <div class="op-wrap" style="max-width:300px"><div class="op-avatar">🤖</div><div class="op-bubble">
+    <div class="op-name">Optimus Prime</div>
+    <div class="op-text" id="br-msg">Even the strongest Autobots need to recharge. Let's power up your Energon levels together.</div>
+  </div></div>
+  <div class="breathe-txt tf" id="br-txt">ENERGON INTAKE...</div>
+  <div class="breathe-circle"><div class="breathe-icon">🔋</div></div>
+  <div class="breathe-sub" id="br-sub">Breathe in slowly through your nose... hold... and breathe out through your mouth.</div>
+  <button class="btn-prime" onclick="closeBreathe()">FULLY CHARGED ⚡</button>
+</div>
+
+<!-- POPUP -->
+<div class="popup-ov" id="popup" style="display:none" onclick="closePopup()">
+  <div class="popup-c" onclick="event.stopPropagation()">
+    <span class="popup-i" id="p-icon"></span>
+    <div class="popup-t" id="p-title">ACHIEVEMENT UNLOCKED</div>
+    <div class="popup-n" id="p-name"></div>
+    <div class="popup-d" id="p-desc"></div>
+    <button class="btn-prime" onclick="closePopup()">ACKNOWLEDGED ⚡</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// TOPIC DATA — KS2 SATs Curriculum + Science, History, Geography
+// ============================================================
+const TOPICS={
+  arithmetic:{label:"Arithmetic",icon:"🔢",cls:"m-math",enemy:"Megatron",enemyIcon:"👿",color:"var(--blue)",
+    teach:{intro:"Before we engage Megatron, let me brief you on battle tactics for arithmetic. These number strategies will give you the edge.",
+      steps:[
+        {t:"Partition & Recombine",s:"Break big additions apart: <strong>456+378</strong> → 400+300=700, 50+70=120, 6+8=14 → <strong>834</strong>"},
+        {t:"Times Table Tricks",s:"For <strong>9×</strong> anything: digits always add to 9! 9×7=63 (6+3=9). For <strong>×25</strong>: divide by 4 then ×100"},
+        {t:"Counting Up for Subtraction",s:"<strong>1000−347</strong>: count up 347→350(+3), 350→400(+50), 400→1000(+600) = <strong>653</strong>"}
+      ]
+    },
+    qs:[
+      {q:"What is 7 × 8?",o:["54","56","58","64"],a:1,h:"7×7=49, add one more 7",c:"7×7=49. Add one more 7: 49+7=56. Or think 8×5=40, 8×2=16, total 56!"},
+      {q:"What is 456 + 378?",o:["824","834","814","844"],a:1,h:"Add hundreds, tens, ones",c:"400+300=700, 50+70=120, 6+8=14. Total: 700+120+14=834!"},
+      {q:"What is 1,000 − 347?",o:["653","663","753","647"],a:0,h:"Count up from 347",c:"347→350(+3), 350→400(+50), 400→1000(+600). Total: 3+50+600=653!"},
+      {q:"What is 12 × 12?",o:["124","132","144","148"],a:2,h:"12×10=120, add 12×2",c:"12×10=120, 12×2=24. Add: 120+24=144!"},
+      {q:"What is 804 − 256?",o:["548","558","648","538"],a:0,h:"Count up from 256",c:"256→260(+4), 260→300(+40), 300→800(+500), 800→804(+4). Total: 548!"},
+      {q:"What is 9 × 7?",o:["56","72","63","67"],a:2,h:"10×7 minus 7",c:"10×7=70, minus 7=63. Check: 6+3=9 ✓ (digits of 9× always add to 9!)"},
+      {q:"What is 25 × 4?",o:["75","90","100","125"],a:2,h:"Four 25p coins = ?",c:"Four 25p coins make £1.00. So 25×4=100!"},
+      {q:"What is 35 × 6?",o:["180","200","210","190"],a:2,h:"Split: 30×6 + 5×6",c:"30×6=180, 5×6=30. Add: 180+30=210!"},
+      {q:"What is 6,001 − 4,897?",o:["1,004","1,104","1,204","1,114"],a:1,h:"Count up",c:"4897→4900(+3), 4900→5000(+100), 5000→6000(+1000), 6000→6001(+1). Total: 1,104!"},
+      {q:"What is 1,452 ÷ 4?",o:["353","363","362","373"],a:1,h:"1200÷4, 240÷4, 12÷4",c:"1200÷4=300, 240÷4=60, 12÷4=3. Total: 363!"},
+      {q:"What is 8 × 11?",o:["86","88","96","98"],a:1,h:"8×10 + 8",c:"8×10=80, add 8 more=88. For single digit ×11, just double the digit: 88!"},
+      {q:"What is 3,456 + 2,789?",o:["6,145","6,245","6,235","6,345"],a:1,h:"Add thousands first",c:"3456+2000=5456, +700=6156, +89=6245!"},
+    ]
+  },
+  fractions:{label:"Fractions & Decimals",icon:"🧮",cls:"m-math",enemy:"Starscream",enemyIcon:"🦅",color:"var(--blue)",
+    teach:{intro:"Starscream thinks fractions will confuse you. Let me show you they won't.",
+      steps:[
+        {t:"Fractions of Amounts",s:"<strong>³⁄₅ of 40</strong>: divide by 5 first (40÷5=8), then ×3 = <strong>24</strong>"},
+        {t:"Percentage Shortcuts",s:"<strong>10%</strong> = ÷10. For 30% of 200: 10%=20, ×3=<strong>60</strong>. For 5%, halve the 10%"},
+        {t:"Comparing Fractions",s:"Find a common denominator. <strong>⅔ vs ⁵⁄₈</strong>: ⅔=¹⁶⁄₂₄, ⁵⁄₈=¹⁵⁄₂₄. 16>15 so <strong>⅔ wins</strong>!"}
+      ]
+    },
+    qs:[
+      {q:"What is ½ + ¼?",o:["²⁄₄","¾","³⁄₈","⅔"],a:1,h:"Convert ½ to ²⁄₄",c:"½ = ²⁄₄. Now ²⁄₄ + ¼ = ¾!"},
+      {q:"What is 0.75 as a fraction?",o:["½","¼","¾","⅗"],a:2,h:"75 out of 100",c:"0.75 = ⁷⁵⁄₁₀₀. Both ÷25 gives ¾!"},
+      {q:"What is ³⁄₅ of 40?",o:["20","24","30","15"],a:1,h:"Find ¹⁄₅ first",c:"¹⁄₅ of 40 = 8. Then ×3 = 24!"},
+      {q:"Which is larger: ⅔ or ⁵⁄₈?",o:["⅔","⁵⁄₈","Equal","Can't tell"],a:0,h:"Common denominator: 24",c:"⅔=¹⁶⁄₂₄, ⁵⁄₈=¹⁵⁄₂₄. 16>15, so ⅔ is larger!"},
+      {q:"What is 30% of 200?",o:["30","50","60","90"],a:2,h:"10% = 20",c:"10% of 200=20. 30%=20×3=60!"},
+      {q:"Convert ⁷⁄₄ to a mixed number",o:["1½","1¾","2¼","1¼"],a:1,h:"How many 4s in 7?",c:"4 goes into 7 once (=4) with 3 left. So 1¾!"},
+      {q:"What is 0.3 + 0.45?",o:["0.48","0.75","0.35","0.8"],a:1,h:"Line up decimals",c:"0.30+0.45: hundredths 0+5=5, tenths 3+4=7. Answer: 0.75!"},
+      {q:"What is ¹⁄₃ of 270?",o:["80","90","100","70"],a:1,h:"÷3",c:"270÷3=90!"},
+      {q:"What is 15% of 60?",o:["6","9","12","15"],a:1,h:"10%+5%",c:"10%=6, 5%=3. 15%=6+3=9!"},
+      {q:"Simplify ¹²⁄₁₈",o:["⅔","¾","³⁄₆","⁶⁄₉"],a:0,h:"HCF is 6",c:"Both ÷6: 12÷6=2, 18÷6=3. Answer: ⅔!"},
+      {q:"What is 2.6 × 3?",o:["6.8","7.8","7.6","8.6"],a:1,h:"2×3 + 0.6×3",c:"2×3=6, 0.6×3=1.8. Total: 7.8!"},
+      {q:"Order smallest first: 0.4, ⅓, 0.35",o:["⅓,0.35,0.4","0.35,⅓,0.4","0.4,0.35,⅓","⅓,0.4,0.35"],a:1,h:"⅓≈0.333",c:"⅓≈0.333, so order is 0.333, 0.35, 0.4!"},
+    ]
+  },
+  spelling:{label:"Spelling & Grammar",icon:"📝",cls:"m-eng",enemy:"Soundwave",enemyIcon:"📡",color:"var(--gold)",
+    teach:{intro:"Soundwave intercepts communications. To defeat him, your spelling and grammar must be precise.",
+      steps:[
+        {t:"Memory Tricks",s:"<strong>necessary</strong>: 1 Collar, 2 Socks (1 C, 2 S's). <strong>separate</strong>: there's A RAT in it!"},
+        {t:"Hidden Words",s:"<strong>environment</strong> has IRON in it. <strong>definitely</strong> has FINITE in the middle."},
+        {t:"Grammar Power",s:"Fronted adverbials need a <strong>comma</strong> after them. Passive voice uses 'was/were + past tense'."}
+      ]
+    },
+    qs:[
+      {q:"Which spelling is correct?",o:["necessary","neccessary","necessery","neccesary"],a:0,h:"1 Collar, 2 Socks",c:"ne-CES-sa-ry. One C, two S's!"},
+      {q:"Which spelling is correct?",o:["seperate","separete","separate","seperete"],a:2,h:"A RAT hiding inside!",c:"sep-A-RAT-e. Find the rat!"},
+      {q:"Which spelling is correct?",o:["definately","definatly","definitely","deffinitely"],a:2,h:"FINITE in the middle",c:"de-FINITE-ly!"},
+      {q:"Comma: which is correct?",o:["Although it rained, we went.","Although it rained we, went.","Although, it rained we went.","Although it, rained."],a:0,h:"Comma after fronted adverbial",c:"'Although it rained' is a fronted adverbial — comma after it!"},
+      {q:"What type of word is 'quickly'?",o:["Adjective","Noun","Adverb","Verb"],a:2,h:"Describes HOW",c:"Describes HOW you do something = adverb. Most end in -ly!"},
+      {q:"Which is passive voice?",o:["The dog chased the cat.","The cat was chased.","The dog is chasing.","The cat ran."],a:1,h:"Subject receives the action",c:"'The cat WAS CHASED' — the cat receives the action. That's passive!"},
+      {q:"'If I ___ rich...' (subjunctive)",o:["was","were","am","be"],a:1,h:"Subjunctive = were",c:"Imaginary situations use 'were': 'If I WERE rich...'"},
+      {q:"What does 'reluctant' mean?",o:["Excited","Unwilling","Angry","Confused"],a:1,h:"Don't want to do it",c:"Reluctant = unwilling, hesitant. You don't want to do it."},
+      {q:"Which spelling is correct?",o:["accomodation","accommodation","acomodation","accommadation"],a:1,h:"2 Cots, 2 Mattresses",c:"aCCoMModation — double C, double M!"},
+      {q:"What does 'benevolent' mean?",o:["Evil","Kind","Clever","Brave"],a:1,h:"Bene = good",c:"BENE means good (like benefit). Benevolent = kind and generous."},
+      {q:"Root word of 'uncomfortable'?",o:["un","comfort","able","table"],a:1,h:"Remove prefix & suffix",c:"Remove un- and -able. Left with: COMFORT!"},
+      {q:"Which spelling is correct?",o:["rhythm","rythm","rhythem","rythym"],a:0,h:"No normal vowels!",c:"R.H.Y.T.H.M — Rhythm Has Your Two Hips Moving!"},
+    ]
+  },
+  science:{label:"Science",icon:"🔬",cls:"m-sci",enemy:"Shockwave",enemyIcon:"🔮",color:"var(--green)",
+    teach:{intro:"Shockwave thinks he's the smartest. Prove him wrong with your science knowledge.",
+      steps:[
+        {t:"Living Things",s:"Animals are grouped: <strong>mammals</strong> (warm-blooded, fur, live young), <strong>reptiles</strong> (cold-blooded, scales, eggs), <strong>amphibians</strong> (moist skin, water+land)"},
+        {t:"Forces",s:"<strong>Gravity</strong> pulls things down. <strong>Friction</strong> slows things down. <strong>Air resistance</strong> is friction from air."},
+        {t:"Earth & Space",s:"Earth spins on its <strong>axis</strong> (causes day/night). It <strong>orbits</strong> the Sun in 365¼ days. The Moon orbits Earth in about 28 days."}
+      ]
+    },
+    qs:[
+      {q:"Which force pulls objects towards Earth?",o:["Friction","Magnetism","Gravity","Air resistance"],a:2,h:"Sir Isaac Newton's apple",c:"Gravity pulls everything towards the centre of Earth!"},
+      {q:"What causes day and night?",o:["Earth orbiting the Sun","The Moon blocking light","Earth spinning on its axis","The Sun moving"],a:2,h:"Earth spins",c:"Earth rotates on its axis every 24 hours — when your side faces the Sun, it's day!"},
+      {q:"Which organ pumps blood?",o:["Brain","Lungs","Liver","Heart"],a:3,h:"It beats about 100,000 times a day",c:"Your heart pumps blood around your body through blood vessels!"},
+      {q:"What do plants need for photosynthesis?",o:["Light, water & CO₂","Light, soil & oxygen","Water, soil & heat","CO₂, oxygen & soil"],a:0,h:"Light + water + carbon dioxide",c:"Plants use sunlight, water, and carbon dioxide to make glucose (food) and oxygen!"},
+      {q:"How long does Earth take to orbit the Sun?",o:["24 hours","28 days","365¼ days","7 days"],a:2,h:"That's why we have years",c:"365¼ days — that's one year! The ¼ is why we have a leap year every 4 years."},
+      {q:"Which material is a conductor?",o:["Wood","Plastic","Metal","Rubber"],a:2,h:"It lets electricity flow",c:"Metals like copper conduct electricity. Wood, plastic and rubber are insulators!"},
+      {q:"What type of animal is a frog?",o:["Mammal","Reptile","Amphibian","Fish"],a:2,h:"Lives in water AND on land",c:"Amphibians start life in water (tadpoles!) and can live on land as adults."},
+      {q:"What is evaporation?",o:["Liquid→Gas","Gas→Liquid","Solid→Liquid","Liquid→Solid"],a:0,h:"Water disappearing from a puddle",c:"Evaporation is liquid turning into gas. That's why puddles dry up in the sun!"},
+      {q:"Which planet is closest to the Sun?",o:["Venus","Earth","Mars","Mercury"],a:3,h:"Named after the messenger god",c:"Mercury is closest, then Venus, Earth, Mars!"},
+      {q:"What does friction do?",o:["Speeds things up","Slows things down","Makes things float","Creates light"],a:1,h:"Rub your hands together",c:"Friction is a force that opposes movement — it slows things down and creates heat!"},
+    ]
+  },
+  history:{label:"History",icon:"🏰",cls:"m-hist",enemy:"Knockout",enemyIcon:"🏎️",color:"var(--red)",
+    teach:{intro:"Knockout thinks he knows everything about the past. Let's show him what a real historian looks like.",
+      steps:[
+        {t:"Ancient Civilisations",s:"<strong>Romans</strong> invaded Britain in 43 AD. They built roads, baths, and Hadrian's Wall. They left around 410 AD."},
+        {t:"Key Periods",s:"<strong>Vikings</strong> first raided in 793 AD (Lindisfarne). <strong>1066</strong>: Battle of Hastings — William the Conqueror became King."},
+        {t:"Modern History",s:"<strong>WW2</strong> (1939-1945): children were evacuated from cities. The <strong>Blitz</strong> was the German bombing of London and other cities."}
+      ]
+    },
+    qs:[
+      {q:"When did the Romans invade Britain?",o:["43 AD","100 BC","410 AD","55 BC"],a:0,h:"Emperor Claudius ordered it",c:"43 AD under Emperor Claudius. Julius Caesar visited earlier (55 BC) but didn't stay!"},
+      {q:"What year was the Battle of Hastings?",o:["1066","1166","966","1266"],a:0,h:"Most famous date in English history",c:"1066 — William the Conqueror defeated King Harold and became King of England!"},
+      {q:"The Vikings first raided which place?",o:["London","Canterbury","Lindisfarne","York"],a:2,h:"A monastery on an island",c:"Lindisfarne monastery in 793 AD — it shocked all of Europe!"},
+      {q:"What did the Romans build across northern England?",o:["Stonehenge","The M1","Hadrian's Wall","Big Ben"],a:2,h:"To keep out the Scots!",c:"Hadrian's Wall — 73 miles long, built around 122 AD to defend the northern border!"},
+      {q:"When was World War 2?",o:["1914-1918","1939-1945","1929-1935","1940-1950"],a:1,h:"Started when Germany invaded Poland",c:"1939-1945. WW1 was 1914-1918!"},
+      {q:"What was the Blitz?",o:["A Roman battle","Viking invasion","German bombing of cities","A Tudor ship"],a:2,h:"During WW2",c:"The Blitz was the sustained German bombing of British cities in 1940-41!"},
+      {q:"Who was the first Tudor monarch?",o:["Henry VIII","Elizabeth I","Henry VII","Mary I"],a:2,h:"Won the Battle of Bosworth",c:"Henry VII (Henry Tudor) won the Battle of Bosworth in 1485!"},
+      {q:"In WW2, children were...?",o:["Sent to fight","Evacuated to countryside","Kept in school","Given jobs"],a:1,h:"Sent somewhere safer",c:"Children were evacuated from cities to the countryside to escape the bombing!"},
+      {q:"Ancient Egypt: what were pharaohs buried in?",o:["Castles","Pyramids","Churches","Caves"],a:1,h:"Huge triangular structures",c:"Pyramids! The Great Pyramid of Giza was built around 2560 BC."},
+      {q:"What did the Ancient Greeks invent?",o:["Cars","Democracy","Television","Trains"],a:1,h:"A system of government",c:"Democracy — 'demos' (people) + 'kratos' (rule). Government by the people!"},
+    ]
+  },
+  geography:{label:"Geography",icon:"🌍",cls:"m-eng",enemy:"Airachnid",enemyIcon:"🕷️",color:"#a855f7",
+    teach:{intro:"Airachnid has tangled the world's geography into her web. Let's untangle it.",
+      steps:[
+        {t:"UK Geography",s:"The UK has 4 countries: <strong>England, Scotland, Wales, Northern Ireland</strong>. The longest river is the <strong>Severn</strong>. The highest mountain is <strong>Ben Nevis</strong>."},
+        {t:"World Features",s:"<strong>Lines of latitude</strong> go east-west (like a ladder). <strong>Lines of longitude</strong> go north-south. The <strong>Equator</strong> is 0° latitude."},
+        {t:"Physical Geography",s:"The <strong>water cycle</strong>: evaporation → condensation → precipitation → collection. <strong>Erosion</strong> is when water/wind wears away rock."}
+      ]
+    },
+    qs:[
+      {q:"What is the longest river in the UK?",o:["Thames","Severn","Trent","Mersey"],a:1,h:"Flows through Wales and England",c:"The River Severn at 220 miles! The Thames is the longest in England only."},
+      {q:"What is the Equator?",o:["A country","0° latitude line","The North Pole","A mountain"],a:1,h:"Divides Earth in half",c:"The Equator is the imaginary line at 0° latitude dividing Earth into Northern and Southern hemispheres!"},
+      {q:"What is the highest mountain in the UK?",o:["Snowdon","Scafell Pike","Ben Nevis","Helvellyn"],a:2,h:"It's in Scotland",c:"Ben Nevis in Scotland at 1,345 metres! Snowdon is highest in Wales, Scafell Pike in England."},
+      {q:"What are the 4 countries of the UK?",o:["England, France, Wales, Scotland","England, Scotland, Wales, N.Ireland","England, Scotland, Ireland, Wales","England, Wales, Cornwall, Scotland"],a:1,h:"One is 'Northern'",c:"England, Scotland, Wales, and Northern Ireland!"},
+      {q:"In the water cycle, what is condensation?",o:["Water heating up","Gas turning to liquid","Ice melting","Rain falling"],a:1,h:"Clouds forming",c:"Condensation is water vapour (gas) cooling and turning back into tiny water droplets — that's how clouds form!"},
+      {q:"Lines of latitude run...?",o:["North to South","East to West","Diagonally","Randomly"],a:1,h:"Think 'lateral' = side to side",c:"Latitude lines run east-west (horizontal), like the rungs of a ladder!"},
+      {q:"What is erosion?",o:["Building up of land","Wearing away of rock","Planting trees","Flooding"],a:1,h:"Wind and water do this",c:"Erosion is when water, wind, or ice gradually wears away rock and soil over time!"},
+      {q:"Which continent is Brazil in?",o:["Africa","North America","South America","Europe"],a:2,h:"The biggest country there",c:"South America! Brazil is the largest country in South America."},
+      {q:"What is a tributary?",o:["A type of mountain","A river flowing into another river","An island","A lake"],a:1,h:"A smaller river joining a bigger one",c:"A tributary is a smaller river or stream that flows into a larger river!"},
+      {q:"Which ocean is the largest?",o:["Atlantic","Indian","Arctic","Pacific"],a:3,h:"It's between Asia and the Americas",c:"The Pacific Ocean — it covers more area than all the land on Earth combined!"},
+    ]
+  }
+};
+
+// TRANSFORMER PARTS
+const PARTS=[
+  {id:"head",icon:"🤖",name:"Head Unit"},{id:"chest",icon:"🛡️",name:"Chest Armour"},
+  {id:"arm_l",icon:"💪",name:"Left Arm"},{id:"arm_r",icon:"🦾",name:"Right Arm"},
+  {id:"leg_l",icon:"🦿",name:"Left Leg"},{id:"leg_r",icon:"🦵",name:"Right Leg"},
+  {id:"weapon",icon:"⚔️",name:"Weapon"},{id:"wings",icon:"🔰",name:"Wings"},
+  {id:"core",icon:"💎",name:"Energon Core"},{id:"paint",icon:"🎨",name:"Paint Job"},
+];
+
+const BADGES=[
+  {id:"first",name:"First Strike",desc:"Win your first battle",icon:"🎖️",ck:s=>s.tc>=1},
+  {id:"s3",name:"3-Day Ops",desc:"3-day streak",icon:"🔥",ck:s=>s.sk>=3},
+  {id:"s7",name:"Prime Dedication",desc:"7-day streak",icon:"💥",ck:s=>s.sk>=7},
+  {id:"pf",name:"Flawless Victory",desc:"100% on any battle",icon:"💎",ck:s=>s.pf},
+  {id:"5m",name:"All Sectors Clear",desc:"Battle all 5 enemies",icon:"🌌",ck:s=>s.pv>=5},
+  {id:"10q",name:"War Veteran",desc:"Complete 10 battles",icon:"🏅",ck:s=>s.tc>=10},
+  {id:"50c",name:"Energon Hoarder",desc:"50 correct answers",icon:"⚡",ck:s=>s.co>=50},
+  {id:"100c",name:"Prime Commander",desc:"100 correct answers",icon:"👑",ck:s=>s.co>=100},
+  {id:"sp30",name:"Speed Demon",desc:"10+ in speed round",icon:"⏱️",ck:s=>s.spBest>=10},
+  {id:"build",name:"Master Builder",desc:"Collect 5 parts",icon:"🤖",ck:s=>(s.parts||[]).length>=5},
+];
+
+const SK="autobot_v1";
+let S,cKey,cTopic,cQs,cIdx,cScore,cAns,fbT,hOn,spTimer,spScore,spIdx,spQs;
+
+function defS(){return{tc:0,co:0,sk:1,pv:0,vp:{},pf:false,eb:[],ld:new Date().toDateString(),ws:0,parts:[],spBest:0,botName:"",level:1,xp:0}}
+function loadS(){try{const r=localStorage.getItem(SK);if(!r)return defS();const s=JSON.parse(r);const d=Math.floor((new Date(new Date().toDateString())-new Date(s.ld))/864e5);if(d===1){s.sk++;s.ld=new Date().toDateString()}else if(d>1){s.sk=1;s.ld=new Date().toDateString()}saveS(s);return s}catch(e){return defS()}}
+function saveS(s){try{localStorage.setItem(SK,JSON.stringify(s))}catch(e){}}
+
+// SPEECH
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;u.pitch=0.7;
+  const voices=speechSynthesis.getVoices();
+  const deep=voices.find(v=>v.name.includes('Daniel'))||voices.find(v=>v.name.includes('Male')&&v.lang.startsWith('en'))||voices.find(v=>v.lang.startsWith('en'));
+  if(deep)u.voice=deep;
+  speechSynthesis.speak(u);
+}
+if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{};
+
+function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById('s-'+id).classList.add('on');window.scrollTo(0,0);if(id==='home')renderHome();if(id==='badges')renderBadges();if(id==='leaderboard')renderLB()}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+const homeQuotes=[
+  "Autobots, choose your mission. The Knowledge Sectors need us.",
+  "One question at a time, soldier. That's how we win this war.",
+  "Freedom is the right of all sentient beings — and knowledge is power.",
+  "Every battle makes you stronger. Choose wisely, Commander.",
+  "The Decepticons underestimate you. Let's prove them wrong.",
+];
+
+function renderHome(){
+  document.getElementById('hs').textContent=S.sk;
+  document.getElementById('hc').textContent=S.co;
+  document.getElementById('hb').textContent=S.eb.length;
+  document.getElementById('hl').textContent=S.level||1;
+  document.getElementById('home-msg').textContent=homeQuotes[Math.floor(Math.random()*homeQuotes.length)];
+  document.getElementById('missions').innerHTML=Object.keys(TOPICS).map(k=>{const t=TOPICS[k];return`<div class="mission ${t.cls}" onclick="goTeach('${k}')"><div class="m-icon">${t.icon}</div><div class="m-info"><div class="m-name">${t.label}</div><div class="m-sub">Battle: ${t.enemy}</div><div class="m-enemy">${t.enemyIcon} ${t.enemy} guards this sector</div></div>${S.vp[k]?'<div class="m-done">✓ CLEAR</div>':''}</div>`}).join('');
+  // Bot display
+  if(S.parts&&S.parts.length>0){
+    document.getElementById('bot-sec').style.display='block';
+    const botParts=S.parts.map(p=>PARTS.find(x=>x.id===p)).filter(Boolean);
+    document.getElementById('my-bot').innerHTML=`<div style="text-align:center;background:var(--metal2);border:1px solid var(--blue-b);border-radius:4px;padding:16px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))"><div class="parts-grid">${PARTS.map(p=>`<div class="part ${S.parts.includes(p.id)?'earned':'locked'}">${p.icon}</div>`).join('')}</div><div style="font-family:Orbitron;font-size:11px;color:var(--energon);margin-top:8px;letter-spacing:1px">${S.parts.length}/${PARTS.length} PARTS COLLECTED</div></div>`;
+  }else{document.getElementById('bot-sec').style.display='none';document.getElementById('my-bot').innerHTML=''}
+}
+
+function goTeach(k){
+  cKey=k;cTopic=TOPICS[k];
+  document.getElementById('teach-msg').textContent=cTopic.teach.intro;
+  document.getElementById('teach-content').innerHTML=cTopic.teach.steps.map(s=>`<div style="background:var(--metal2);border:1px solid var(--glass-b);border-radius:4px;padding:14px;margin-bottom:8px;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))"><div style="font-family:Orbitron;font-size:11px;color:var(--blue);font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">${s.t}</div><div style="font-size:14px;line-height:1.6">${s.s}</div></div>`).join('');
+  go('teach');
+}
+
+function showBreathe(ctx){
+  document.getElementById('breathe').style.display='flex';
+  const msgs={before:"Recharging Energon reserves before battle. Smart move, Commander. Breathe in... and out.",during:"Your Energon is running low. Let's recharge. Every great warrior knows when to pause.",wrong:"Taking damage is part of battle. Let's repair your systems. Breathe in... hold... release."};
+  document.getElementById('br-msg').textContent=msgs[ctx]||msgs.before;
+  let p=0;const phases=["ENERGON INTAKE...","PROCESSING...","ENERGON OUTPUT...","SYSTEMS STABLE..."];
+  document.getElementById('br-txt').textContent=phases[0];
+  const iv=setInterval(()=>{p=(p+1)%4;document.getElementById('br-txt').textContent=phases[p]},3500);
+  document.getElementById('breathe').dataset.iv=iv;
+}
+function closeBreathe(){clearInterval(Number(document.getElementById('breathe').dataset.iv));document.getElementById('breathe').style.display='none';S.ws=0}
+
+// BATTLE
+function startBattle(){
+  cQs=shuffle([...cTopic.qs]).slice(0,6);cIdx=0;cScore=0;cAns=[];hOn=false;S.ws=0;
+  document.getElementById('b-prog').innerHTML='';
+  go('battle');renderBQ();
+}
+function exitBattle(){if(fbT){clearTimeout(fbT);fbT=null}go('home')}
+
+const bEnc=["Direct hit! Excellent work, soldier!","That's the Autobot way!","Outstanding! Keep firing!","Target neutralised!","You're winning this fight!","Precision strike!"];
+const bWenc=["Incoming fire! But we hold the line.","Damage sustained. Recalibrating...","Don't give up — Autobots never surrender.","We learn from every hit. Keep fighting!","Regroup! You've got this, Commander."];
+
+function renderBQ(){
+  const t=cTopic,q=cQs[cIdx];
+  const autoHP=Math.round(((6-cAns.filter(a=>!a.c).length)/6)*100);
+  const decHP=Math.round(((6-cScore)/6)*100);
+  document.getElementById('battle-hud').innerHTML=`<div class="fighter"><span class="fighter-icon">🤖</span><div class="fighter-name" style="color:var(--blue)">AUTOBOT</div><div class="hp-bar"><div class="hp-fill hp-auto" style="width:${autoHP}%"></div></div></div><div class="vs">⚔️</div><div class="fighter"><span class="fighter-icon">${t.enemyIcon}</span><div class="fighter-name" style="color:var(--red)">${t.enemy.toUpperCase()}</div><div class="hp-bar"><div class="hp-fill hp-decepticon" style="width:${decHP}%"></div></div></div>`;
+  let dots='';for(let i=0;i<cQs.length;i++){let c='qd ';if(i===cIdx)c+='qd-act';else if(i<cAns.length)c+=cAns[i].c?'qd-ok':'qd-no';else c+='qd-def';dots+=`<div class="${c}"></div>`}
+  document.getElementById('b-prog').innerHTML=dots;
+  document.getElementById('b-cnt').textContent=`ROUND ${cIdx+1} OF ${cQs.length}`;
+  document.getElementById('b-txt').textContent=q.q;
+  const L='ABCD';
+  document.getElementById('b-opts').innerHTML=q.o.map((o,i)=>`<button class="obtn" onclick="bPick(${i})"><span class="olet">${L[i]}</span>${o}</button>`).join('');
+  document.getElementById('b-hint').innerHTML=`<button class="hint-btn" onclick="bHint()">⚡ INTEL SCAN</button>`;
+  document.getElementById('b-fb').innerHTML='';
+  document.getElementById('b-coach').style.display='none';
+  hOn=false;
+}
+function bHint(){if(hOn)return;hOn=true;document.getElementById('b-hint').innerHTML=`<div class="hint-box">⚡ ${cQs[cIdx].h}</div>`}
+
+function bPick(i){
+  if(fbT)return;const q=cQs[cIdx],ok=i===q.a;
+  document.querySelectorAll('.obtn').forEach((b,j)=>{b.classList.add('dis');if(j===q.a)b.classList.add('ok');else if(j===i&&!ok)b.classList.add('no')});
+  if(ok){cScore++;S.ws=0}else{S.ws=(S.ws||0)+1}
+  const msg=ok?bEnc[Math.floor(Math.random()*bEnc.length)]:bWenc[Math.floor(Math.random()*bWenc.length)];
+  let fb=`<div class="fb ${ok?'fb-ok':'fb-no'}">${msg}`;
+  if(!ok)fb+=`<div class="fb-ans">Answer: <strong>${q.o[q.a]}</strong></div>`;
+  fb+='</div>';document.getElementById('b-fb').innerHTML=fb;
+  if(!hOn)document.getElementById('b-hint').innerHTML='';
+  if(!ok&&q.c){
+    document.getElementById('b-coach').style.display='block';
+    document.getElementById('b-coach').innerHTML=`<div class="coach"><div class="coach-hdr"><div class="coach-icon">🤖</div><div class="coach-name">Optimus Prime — Tactical Analysis</div></div><div class="coach-txt">${q.c}</div><div class="op-audio" onclick="speak('${q.c.replace(/'/g,"\\'")}')">🔊 Hear explanation</div></div>`;
+  }
+  cAns.push({q:cIdx,c:ok,s:i});
+  const shouldBreathe=S.ws>=2&&!ok;
+  fbT=setTimeout(()=>{fbT=null;if(shouldBreathe){showBreathe('during');const ch=setInterval(()=>{if(document.getElementById('breathe').style.display==='none'){clearInterval(ch);advBQ()}},200)}else advBQ()},ok?1800:3200);
+}
+function advBQ(){if(cIdx+1<cQs.length){cIdx++;renderBQ()}else finishBattle()}
+
+function finishBattle(){
+  const tot=cQs.length,pct=Math.round(cScore/tot*100),perf=cScore===tot,won=cScore>=3;
+  S.tc++;S.co+=cScore;S.ld=new Date().toDateString();
+  S.xp=(S.xp||0)+cScore*10;S.level=Math.floor((S.xp||0)/60)+1;
+  if(!S.vp[cKey]){S.vp[cKey]=true;S.pv=Object.keys(S.vp).length}
+  if(perf)S.pf=true;
+  // Award a part
+  let newPart=null;
+  if(won){
+    const avail=PARTS.filter(p=>!(S.parts||[]).includes(p.id));
+    if(avail.length>0){newPart=avail[Math.floor(Math.random()*avail.length)];S.parts=S.parts||[];S.parts.push(newPart.id)}
+  }
+  const nb=BADGES.filter(b=>b.ck(S)&&!S.eb.includes(b.id));nb.forEach(b=>S.eb.push(b.id));saveS(S);
+
+  document.getElementById('r-emoji').textContent=won?'⚔️':'🛡️';
+  document.getElementById('r-title').textContent=perf?'FLAWLESS VICTORY':won?`${cTopic.enemy.toUpperCase()} DEFEATED`:'RETREAT & REGROUP';
+  document.getElementById('r-sub').textContent=cTopic.label+' sector';
+  document.getElementById('r-num').textContent=cScore;document.getElementById('r-lbl').textContent='OF '+tot;
+  const rc=pct>=80?'var(--green)':pct>=50?'var(--gold)':'var(--red)';
+  document.getElementById('r-ring').style.background=`conic-gradient(${rc} ${pct*3.6}deg,var(--glass) 0deg)`;
+  document.getElementById('r-dots').innerHTML=cAns.map(a=>`<div class="adot ${a.c?'adot-ok':'adot-no'}">${a.c?'✓':'✗'}</div>`).join('');
+  const opMsgs={6:"Flawless execution, Commander. You've earned the highest honour. Optimus Prime is proud to fight alongside you.",5:"Outstanding performance. One slip doesn't define a warrior — your skill is exceptional.",4:"Solid victory. You're growing stronger with every battle. The Decepticons should be worried.",3:"We held the line. With more training, you'll be unstoppable. Don't give up.",2:"Every Autobot takes damage. What matters is that you stood your ground. Let's review our tactics and try again.",1:"It was a tough fight, and you were brave to face it. Some battles we lose — but we always come back stronger.",0:"Commander... it takes real courage to step onto the battlefield. I'm proud you tried. Let's recharge, review the briefing, and go again when you're ready. No rush."};
+  document.getElementById('r-op').textContent=opMsgs[cScore]||opMsgs[3];
+  if(newPart){document.getElementById('r-part').innerHTML=`<div style="margin:14px 0;text-align:center;padding:14px;background:var(--energon-g);border:1px solid rgba(0,229,255,.2);border-radius:4px"><div style="font-family:Orbitron;font-size:11px;color:var(--energon);letter-spacing:1px;margin-bottom:6px">NEW PART EARNED</div><div style="font-size:40px;margin-bottom:4px">${newPart.icon}</div><div style="font-family:Orbitron;font-size:13px;font-weight:700">${newPart.name}</div></div>`}else{document.getElementById('r-part').innerHTML=won?'':'<div style="font-size:12px;color:var(--txt3);margin-top:8px;text-align:center">Win the battle (3+ correct) to earn a part!</div>'}
+  document.getElementById('r-retry').setAttribute('onclick',`goTeach('${cKey}')`);
+  go('results');if(nb.length>0)setTimeout(()=>showPopup(nb[0]),1000);
+}
+
+// SPEED ROUND
+function startSpeed(){
+  spScore=0;spIdx=0;
+  spQs=[];for(let i=0;i<40;i++){const a=Math.floor(Math.random()*12)+1,b=Math.floor(Math.random()*12)+1;const ans=a*b;const opts=[ans];while(opts.length<4){const w=ans+Math.floor(Math.random()*20)-10;if(w!==ans&&w>0&&!opts.includes(w))opts.push(w)}shuffle(opts);spQs.push({q:`${a} × ${b}`,o:opts,a:opts.indexOf(ans)})}
+  go('speed');renderSP();
+  let t=30;document.getElementById('sp-timer').textContent=t;
+  spTimer=setInterval(()=>{t--;document.getElementById('sp-timer').textContent=t;if(t<=0){clearInterval(spTimer);endSpeed()}},1000);
+}
+function renderSP(){
+  if(spIdx>=spQs.length){endSpeed();return}
+  const q=spQs[spIdx];
+  document.getElementById('sp-score').textContent=`SCORE: ${spScore}`;
+  document.getElementById('sp-q').textContent=q.q;
+  document.getElementById('sp-opts').innerHTML=q.o.map((o,i)=>`<button class="speed-btn" onclick="spPick(${i})">${o}</button>`).join('');
+}
+function spPick(i){
+  const q=spQs[spIdx],ok=i===q.a;
+  document.querySelectorAll('.speed-btn').forEach((b,j)=>{if(j===q.a)b.classList.add('ok');else if(j===i&&!ok)b.classList.add('no')});
+  if(ok)spScore++;
+  setTimeout(()=>{spIdx++;renderSP()},400);
+}
+function endSpeed(){
+  clearInterval(spTimer);
+  if(spScore>(S.spBest||0)){S.spBest=spScore}
+  S.co+=spScore;S.xp=(S.xp||0)+spScore*5;S.level=Math.floor((S.xp||0)/60)+1;
+  const nb=BADGES.filter(b=>b.ck(S)&&!S.eb.includes(b.id));nb.forEach(b=>S.eb.push(b.id));saveS(S);
+  alert(`⚡ Speed Round Complete!\n\nScore: ${spScore}\nBest: ${S.spBest}\n\nEvery point powers up your Autobot!`);
+  go('home');if(nb.length>0)setTimeout(()=>showPopup(nb[0]),500);
+}
+
+// DECODE GAME
+function startDecode(){
+  const words=["separate","necessary","rhythm","environment","definitely","accommodation","occasion","government","parliament","temperature"];
+  const picked=shuffle([...words]).slice(0,5);
+  let html='';let solved=0;
+  picked.forEach((w,i)=>{
+    const scrambled=shuffle(w.split('')).join('');
+    html+=`<div style="background:var(--metal2);border:1px solid var(--glass-b);border-radius:4px;padding:14px;margin-bottom:8px;text-align:center;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))">
+      <div style="font-family:Orbitron;font-size:18px;letter-spacing:3px;color:var(--red);margin-bottom:8px">${scrambled.toUpperCase()}</div>
+      <input type="text" id="dec-${i}" data-answer="${w}" placeholder="Type the word..." style="width:100%;padding:10px;background:var(--bg1);border:1px solid var(--glass-b);border-radius:4px;color:var(--txt);font-family:Rajdhani;font-size:16px;font-weight:600;text-align:center;outline:none" onkeyup="checkDecode(${i})">
+      <div id="dec-fb-${i}" style="margin-top:6px;font-size:12px"></div>
+    </div>`;
+  });
+  document.getElementById('decode-area').innerHTML=html;
+  document.getElementById('decode-fb').innerHTML='';
+  go('decode');
+}
+function checkDecode(i){
+  const input=document.getElementById('dec-'+i);
+  const ans=input.dataset.answer;
+  if(input.value.toLowerCase().trim()===ans){
+    input.style.borderColor='var(--green)';input.style.color='var(--green)';input.disabled=true;
+    document.getElementById('dec-fb-'+i).innerHTML='<span style="color:var(--green)">✓ Decoded!</span>';
+    S.co++;S.xp=(S.xp||0)+5;saveS(S);
+  }
+}
+
+// LEADERBOARD
+function renderLB(){
+  const teams=[
+    {name:"Your Autobot",icon:"🤖",score:S.co,level:S.level||1},
+    {name:"Bumblebee Squad",icon:"🐝",score:Math.floor(S.co*.85)+12},
+    {name:"Arcee Team",icon:"⚡",score:Math.floor(S.co*.7)+8},
+    {name:"Bulkhead Force",icon:"🛡️",score:Math.floor(S.co*.6)+5},
+    {name:"Ratchet Medics",icon:"🔧",score:Math.floor(S.co*.45)+3},
+  ].sort((a,b)=>b.score-a.score);
+  const ranks=['gold','silver','bronze','',''];
+  document.getElementById('lb-content').innerHTML=teams.map((t,i)=>`<div class="lb-row${t.name==='Your Autobot'?' style="border-color:var(--blue-b);background:var(--blue-g)"':''}"><div class="lb-rank ${ranks[i]}">${i+1}</div><div class="lb-icon">${t.icon}</div><div class="lb-info"><div class="lb-name">${t.name}</div><div class="lb-score">${t.name==='Your Autobot'?'Level '+(S.level||1):''}</div></div><div class="lb-pts">${t.score}</div></div>`).join('');
+}
+
+// BADGES
+function renderBadges(){
+  const n=S.eb.length;document.getElementById('b-cnt2').textContent=`${n} / ${BADGES.length} UNLOCKED`;
+  document.getElementById('b-fill').style.width=`${n/BADGES.length*100}%`;
+  document.getElementById('b-grid').innerHTML=BADGES.map(b=>{const e=S.eb.includes(b.id);return`<div class="bcard ${e?'bcard-on':'bcard-off'}"><span class="bcicon ${e?'':'bcicon-off'}">${b.icon}</span><div class="bcname ${e?'bcname-on':''}">${b.name}</div><div class="bcdesc">${b.desc}</div></div>`}).join('');
+}
+function showPopup(b){document.getElementById('p-icon').textContent=b.icon;document.getElementById('p-name').textContent=b.name;document.getElementById('p-desc').textContent=b.desc;document.getElementById('popup').style.display='flex'}
+function closePopup(){document.getElementById('popup').style.display='none'}
+
+S=loadS();renderHome();
+
+// Register Service Worker for offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>
