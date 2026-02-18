@@ -1,4 +1,4 @@
-const CACHE_NAME = 'autobot-academy-v1';
+const CACHE_NAME = 'autobot-academy-v2';
 const ASSETS = [
   '/',
   '/index.html',

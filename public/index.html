@@ -7,11 +7,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AutoBot Academy">
 <meta name="theme-color" content="#0a0c12">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icon-192.png">
 <title>AutoBot Academy — KS2 Battle Trainer</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Lexend:wght@300;400;500;600;700&display=swap');
 :root{
   --bg1:#0a0c12;--bg2:#0f1219;--bg3:#141822;--bg4:#1a1f2e;
   --metal:#2a3040;--metal2:#1e2230;--metal-hi:#3a4258;
@@ -25,7 +23,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 html,body{height:100%;overflow-x:hidden}
-body{font-family:'Rajdhani',sans-serif;background:var(--bg1);color:var(--txt);min-height:100vh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{font-family:'Lexend','Segoe UI',sans-serif;background:var(--bg1);color:var(--txt);min-height:100vh;line-height:1.7;letter-spacing:0.3px;word-spacing:2px;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 h1,h2,h3,.tf{font-family:'Orbitron',monospace}
 
 /* GRID BACKGROUND */
@@ -154,14 +152,15 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 
 .qcard{background:var(--metal2);border:1px solid var(--glass-b);border-radius:4px;padding:22px 16px;margin-bottom:12px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
 .qcount{font-family:'Orbitron';font-size:10px;color:var(--txt3);text-align:center;margin-bottom:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
-.qtext{font-family:'Rajdhani';font-size:18px;font-weight:700;text-align:center;line-height:1.5;margin-bottom:18px}
+.qtext{font-family:'Lexend',sans-serif;font-size:19px;font-weight:600;text-align:center;line-height:1.7;margin-bottom:18px;word-spacing:2px}
 
 .obtn{
-  width:100%;padding:13px 14px;border-radius:4px;
+  width:100%;padding:16px 14px;border-radius:4px;
   background:var(--glass);border:1px solid var(--glass-b);
-  color:var(--txt);font-size:15px;font-weight:600;cursor:pointer;
-  text-align:left;margin-bottom:6px;font-family:'Rajdhani';
-  transition:all .2s;display:flex;align-items:center;gap:8px;
+  color:var(--txt);font-size:16px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:7px;font-family:'Lexend',sans-serif;
+  transition:all .2s;display:flex;align-items:center;gap:8px;min-height:52px;
+  line-height:1.6;word-spacing:2px;
   clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
 }
 .obtn:active{transform:scale(.97)}
@@ -268,16 +267,53 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .popup-n{font-size:16px;font-weight:700;margin-bottom:3px}
 .popup-d{font-size:12px;color:var(--txt2);margin-bottom:18px}
 
+/* DYSLEXIA: Syllable colours */
+.syl-1{color:#ff8a80}.syl-2{color:#82b1ff}.syl-3{color:#b9f6ca}.syl-4{color:#ffe57f}.syl-5{color:#ea80fc}.syl-6{color:#80d8ff}
+/* TTS button */
+.tts{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:var(--blue-g);border:1px solid rgba(0,168,255,.15);color:var(--blue);font-size:14px;cursor:pointer;vertical-align:middle;margin-left:4px;flex-shrink:0}
+.tts:active{transform:scale(.85);background:var(--blue-b)}
+.tts.playing{animation:pulse .8s ease-in-out infinite;background:var(--blue-b)}
+/* Reading ruler */
+#reading-ruler{position:fixed;left:0;right:0;height:48px;pointer-events:none;z-index:80;display:none;transition:top .08s ease}
+#reading-ruler .rw{position:absolute;left:0;right:0;top:0;height:48px;border-top:2px solid var(--blue);border-bottom:2px solid var(--blue);box-shadow:0 -60px 0 40px rgba(10,12,18,.7),0 60px 0 40px rgba(10,12,18,.7)}
+.ruler-btn{position:fixed;bottom:16px;right:16px;z-index:81;width:44px;height:44px;border-radius:10px;background:var(--metal2);border:1px solid var(--blue-b);color:var(--blue);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.ruler-btn:active{transform:scale(.9)}
+.ruler-btn.active{background:var(--blue-g)}
+/* Music toggle */
+.music-btn{position:fixed;bottom:16px;left:16px;z-index:81;width:44px;height:44px;border-radius:10px;background:var(--metal2);border:1px solid var(--glass-b);color:var(--txt2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.music-btn:active{transform:scale(.9)}
+.music-btn.active{color:var(--energon);border-color:rgba(0,229,255,.3)}
+/* Particles */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.ptcl{position:absolute;border-radius:50%;animation:ptclFloat linear infinite}
+@keyframes ptclFloat{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.6;transform:translateY(85vh) scale(1)}90%{opacity:.3}100%{transform:translateY(-10vh) scale(0);opacity:0}}
+/* SVG robots */
+.robot-av{animation:energyPulse 3s ease-in-out infinite}
+@keyframes energyPulse{0%,100%{filter:drop-shadow(0 0 3px var(--blue-b))}50%{filter:drop-shadow(0 0 10px var(--blue-b))}}
+@keyframes hitFlash{0%{filter:brightness(1)}30%{filter:brightness(2.5) saturate(0)}100%{filter:brightness(1)}}
+.robot-hit{animation:hitFlash .4s ease!important}
+/* Report */
+.report-card{background:var(--bg1);border:2px solid var(--blue-b);border-radius:8px;padding:20px 16px;text-align:center;margin:12px 0}
+.rpt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;text-align:left}
+.rpt-s{background:var(--metal2);border:1px solid var(--glass-b);border-radius:4px;padding:10px}
+.rpt-l{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;font-family:'Orbitron'}
+.rpt-v{font-family:'Orbitron';font-size:18px;font-weight:800;color:var(--blue);margin-top:2px}
+
 .footer{text-align:center;font-size:10px;color:var(--txt4);margin-top:22px;letter-spacing:.5px}
 </style>
 </head>
 <body>
+<div id="particles"></div>
+<div id="reading-ruler"><div class="rw"></div></div>
+<button class="ruler-btn" id="ruler-btn" onclick="toggleRuler()">📏</button>
+<button class="music-btn" id="music-btn" onclick="toggleMusic()">🔇</button>
 
 <!-- ===== HOME ===== -->
 <div class="scr on" id="s-home"><div class="ct">
   <div style="position:relative">
     <button class="nav nav-r" style="background:var(--gold-g);border-color:var(--gold-b);color:var(--gold)" onclick="go('badges')">🏆</button>
     <button class="nav" style="left:auto;right:56px;background:var(--blue-g);border-color:var(--blue-b);color:var(--blue)" onclick="go('leaderboard')">📊</button>
+    <button class="nav" style="left:12px;background:var(--green-g);border-color:var(--green-b);color:var(--green)" onclick="go('report')">📋</button>
   </div>
   <div class="hdr anim">
     <span class="hdr-icon">⚔️</span>
@@ -409,6 +445,17 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
     <div class="bgrid" id="b-grid"></div>
     <div style="text-align:center;margin-top:18px"><button class="btn-prime" onclick="go('home')">BACK TO BASE</button></div>
   </div>
+</div></div>
+
+<!-- ===== REPORT ===== -->
+<div class="scr" id="s-report"><div class="ct">
+  <button class="nav" onclick="go('home')">←</button>
+  <div style="padding-top:48px"><div class="hdr"><div class="hdr-title" style="font-size:16px">📋 PROGRESS REPORT</div><div class="hdr-sub">Share with your teacher</div></div>
+  <div class="report-card" id="rpt-content"></div>
+  <div style="text-align:center;margin-top:12px">
+    <button class="btn-prime" onclick="downloadReport()">📥 DOWNLOAD</button><br>
+    <button class="btn-energon" style="margin-top:8px" onclick="shareReport()">📤 SHARE</button>
+  </div></div>
 </div></div>
 
 <!-- BREATHE -->
@@ -814,16 +861,191 @@ function renderBadges(){
 function showPopup(b){document.getElementById('p-icon').textContent=b.icon;document.getElementById('p-name').textContent=b.name;document.getElementById('p-desc').textContent=b.desc;document.getElementById('popup').style.display='flex'}
 function closePopup(){document.getElementById('popup').style.display='none'}
 
-S=loadS();renderHome();
-
-// Register Service Worker for offline support
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.log('SW registration failed:', err));
-  });
+// ============================================================
+// TTS — Read aloud for dyslexia support
+// ============================================================
+function tts(text,btnEl){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text.replace(/<[^>]*>/g,''));
+  u.rate=0.88;u.pitch=0.72;
+  const voices=speechSynthesis.getVoices();
+  const v=voices.find(v=>v.name.includes('Daniel'))||voices.find(v=>v.lang.startsWith('en')&&v.name.toLowerCase().includes('male'))||voices.find(v=>v.lang.startsWith('en'));
+  if(v)u.voice=v;
+  if(btnEl){btnEl.classList.add('playing');u.onend=()=>btnEl.classList.remove('playing')}
+  speechSynthesis.speak(u);
 }
+if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{};
+
+// ============================================================
+// SYLLABLE COLOUR CODING for dyslexia
+// ============================================================
+function syllabify(w){const v='aeiouy';let syls=[];let c='';for(let i=0;i<w.length;i++){c+=w[i];const isV=v.includes(w[i].toLowerCase());const nC=i+1<w.length&&!v.includes(w[i+1].toLowerCase());const n2V=i+2<w.length&&v.includes(w[i+2].toLowerCase());if(isV&&nC&&n2V&&c.length>1){syls.push(c);c=''}};if(c)syls.push(c);return syls.length?syls:[w]}
+function colourWord(w){if(w.length<5)return w;const s=syllabify(w);const cls=['syl-1','syl-2','syl-3','syl-4','syl-5','syl-6'];return s.map((x,i)=>`<span class="${cls[i%cls.length]}">${x}</span>`).join('')}
+function colourText(t){return t.replace(/\b([a-zA-Z]{5,})\b/g,m=>colourWord(m))}
+
+// ============================================================
+// READING RULER
+// ============================================================
+let rulerOn=false;
+function toggleRuler(){rulerOn=!rulerOn;document.getElementById('reading-ruler').style.display=rulerOn?'block':'none';document.getElementById('ruler-btn').classList.toggle('active',rulerOn)}
+document.addEventListener('touchmove',e=>{if(rulerOn)document.getElementById('reading-ruler').style.top=(e.touches[0].clientY-24)+'px'});
+document.addEventListener('mousemove',e=>{if(rulerOn)document.getElementById('reading-ruler').style.top=(e.clientY-24)+'px'});
+
+// ============================================================
+// PARTICLES
+// ============================================================
+function mkParticles(){let h='';for(let i=0;i<18;i++){const x=Math.random()*100,sz=Math.random()*3+1,dur=Math.random()*15+10,del=Math.random()*10;h+=`<div class="ptcl" style="left:${x}%;width:${sz}px;height:${sz}px;background:${Math.random()>.5?'var(--blue)':'var(--energon)'};animation-duration:${dur}s;animation-delay:${del}s;opacity:.3"></div>`}document.getElementById('particles').innerHTML=h}
+
+// ============================================================
+// PROCEDURAL MUSIC (Web Audio)
+// ============================================================
+let audioCtx,musicOn=false,mNodes=[];
+function initAudio(){if(audioCtx)return;audioCtx=new(window.AudioContext||window.webkitAudioContext)()}
+function startMusic(){initAudio();if(musicOn)return;musicOn=true;document.getElementById('music-btn').textContent='🔊';document.getElementById('music-btn').classList.add('active');
+  [110,146.83,164.81,220,329.63].forEach((f,i)=>{const o=audioCtx.createOscillator();const g=audioCtx.createGain();const fl=audioCtx.createBiquadFilter();o.type='sine';o.frequency.value=f;fl.type='lowpass';fl.frequency.value=400;fl.Q.value=1;g.gain.value=0;g.gain.setTargetAtTime(.012,audioCtx.currentTime+i*.5,2);o.connect(fl);fl.connect(g);g.connect(audioCtx.destination);o.start();mNodes.push({osc:o,gain:g,filter:fl});const l=audioCtx.createOscillator();const lg=audioCtx.createGain();l.frequency.value=.05+i*.02;lg.gain.value=f*.01;l.connect(lg);lg.connect(o.frequency);l.start();mNodes.push({osc:l,gain:lg})})}
+function stopMusic(){musicOn=false;document.getElementById('music-btn').textContent='🔇';document.getElementById('music-btn').classList.remove('active');mNodes.forEach(n=>{try{n.gain.gain.setTargetAtTime(0,audioCtx.currentTime,.5);setTimeout(()=>{try{n.osc.stop()}catch(e){}},2000)}catch(e){}});mNodes=[]}
+function toggleMusic(){if(musicOn)stopMusic();else startMusic()}
+function sfx(type){if(!audioCtx)initAudio();const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);if(type==='correct'){o.frequency.value=523;g.gain.value=.07;o.start();o.frequency.setTargetAtTime(784,audioCtx.currentTime,.05);g.gain.setTargetAtTime(0,audioCtx.currentTime+.15,.1);setTimeout(()=>o.stop(),400)}else if(type==='wrong'){o.frequency.value=200;o.type='sawtooth';g.gain.value=.05;o.start();o.frequency.setTargetAtTime(100,audioCtx.currentTime,.1);g.gain.setTargetAtTime(0,audioCtx.currentTime+.2,.1);setTimeout(()=>o.stop(),500)}else if(type==='victory'){o.frequency.value=440;g.gain.value=.07;o.start();setTimeout(()=>o.frequency.value=554,150);setTimeout(()=>o.frequency.value=659,300);setTimeout(()=>o.frequency.value=880,450);g.gain.setTargetAtTime(0,audioCtx.currentTime+.6,.2);setTimeout(()=>o.stop(),1000)}}
+
+// ============================================================
+// SVG ROBOT CHARACTERS
+// ============================================================
+function drawBot(el,type,s){
+  if(!el)return;s=s||56;let svg='';
+  if(type==='optimus'){svg=`<defs><linearGradient id="og${s}" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0088dd"/><stop offset="100%" stop-color="#004488"/></linearGradient></defs><rect x="${s*.15}" y="${s*.12}" width="${s*.7}" height="${s*.35}" rx="2" fill="url(#og${s})" stroke="#00a8ff" stroke-width="1"/><rect x="${s*.25}" y="${s*.06}" width="${s*.5}" height="${s*.18}" rx="1" fill="#003366" stroke="#00a8ff" stroke-width=".8"/><rect x="${s*.32}" y="${s*.14}" width="${s*.12}" height="${s*.06}" rx="1" fill="#00e5ff"/><rect x="${s*.56}" y="${s*.14}" width="${s*.12}" height="${s*.06}" rx="1" fill="#00e5ff"/><polygon points="${s*.1},${s*.5} ${s*.9},${s*.5} ${s*.85},${s*.85} ${s*.15},${s*.85}" fill="#aa1122" stroke="#ff2d40" stroke-width=".8"/><rect x="${s*.42}" y="${s*.52}" width="${s*.16}" height="${s*.16}" rx="1" fill="#00a8ff" opacity=".5"/>`}
+  else if(type==='megatron'){svg=`<polygon points="${s*.5},${s*.05} ${s*.85},${s*.3} ${s*.85},${s*.7} ${s*.5},${s*.95} ${s*.15},${s*.7} ${s*.15},${s*.3}" fill="#333" stroke="#888" stroke-width="1"/><polygon points="${s*.3},${s*.25} ${s*.45},${s*.2} ${s*.45},${s*.35} ${s*.3},${s*.35}" fill="#ff2d40"/><polygon points="${s*.55},${s*.2} ${s*.7},${s*.25} ${s*.7},${s*.35} ${s*.55},${s*.35}" fill="#ff2d40"/><polygon points="${s*.5},${s*.01} ${s*.42},${s*.15} ${s*.58},${s*.15}" fill="#444"/>`}
+  else if(type==='starscream'){svg=`<polygon points="${s*.5},${s*.1} ${s*.75},${s*.35} ${s*.65},${s*.8} ${s*.35},${s*.8} ${s*.25},${s*.35}" fill="#3a3a5a" stroke="#6666aa" stroke-width="1"/><polygon points="${s*.35},${s*.28} ${s*.42},${s*.25} ${s*.42},${s*.35}" fill="#ff2d40"/><polygon points="${s*.58},${s*.25} ${s*.65},${s*.28} ${s*.58},${s*.35}" fill="#ff2d40"/><polygon points="${s*.05},${s*.25} ${s*.3},${s*.4} ${s*.15},${s*.55}" fill="#2a2a4a"/><polygon points="${s*.95},${s*.25} ${s*.7},${s*.4} ${s*.85},${s*.55}" fill="#2a2a4a"/>`}
+  else if(type==='soundwave'){svg=`<rect x="${s*.18}" y="${s*.1}" width="${s*.64}" height="${s*.75}" rx="3" fill="#0a0a2a" stroke="#4444cc" stroke-width="1"/><rect x="${s*.25}" y="${s*.18}" width="${s*.5}" height="${s*.2}" rx="2" fill="#000" stroke="#ff2d40" stroke-width=".5"/><line x1="${s*.32}" y1="${s*.28}" x2="${s*.38}" y2="${s*.25}" stroke="#ff2d40" stroke-width="1.5"/><line x1="${s*.42}" y1="${s*.3}" x2="${s*.48}" y2="${s*.24}" stroke="#ff2d40" stroke-width="1.5"/><line x1="${s*.52}" y1="${s*.26}" x2="${s*.58}" y2="${s*.28}" stroke="#ff2d40" stroke-width="1.5"/><line x1="${s*.62}" y1="${s*.24}" x2="${s*.68}" y2="${s*.3}" stroke="#ff2d40" stroke-width="1.5"/>`}
+  else if(type==='shockwave'){svg=`<polygon points="${s*.5},${s*.08} ${s*.8},${s*.35} ${s*.72},${s*.85} ${s*.28},${s*.85} ${s*.2},${s*.35}" fill="#1a0a2a" stroke="#8844cc" stroke-width="1"/><circle cx="${s*.5}" cy="${s*.3}" r="${s*.1}" fill="#220033" stroke="#ff2d40" stroke-width="1.5"/><circle cx="${s*.5}" cy="${s*.3}" r="${s*.04}" fill="#ff2d40"/><line x1="${s*.2}" y1="${s*.4}" x2="${s*.05}" y2="${s*.55}" stroke="#5522aa" stroke-width="3"/>`}
+  else if(type==='knockout'){svg=`<rect x="${s*.2}" y="${s*.12}" width="${s*.6}" height="${s*.35}" rx="3" fill="#aa1122" stroke="#ff4455" stroke-width="1"/><polygon points="${s*.3},${s*.06} ${s*.5},${s*.02} ${s*.7},${s*.06} ${s*.65},${s*.14} ${s*.35},${s*.14}" fill="#881122"/><rect x="${s*.3}" y="${s*.22}" width="${s*.14}" height="${s*.08}" rx="1" fill="#ff6b6b"/><rect x="${s*.56}" y="${s*.22}" width="${s*.14}" height="${s*.08}" rx="1" fill="#ff6b6b"/><polygon points="${s*.15},${s*.5} ${s*.85},${s*.5} ${s*.78},${s*.85} ${s*.22},${s*.85}" fill="#771122"/>`}
+  else if(type==='airachnid'){svg=`<ellipse cx="${s*.5}" cy="${s*.4}" rx="${s*.25}" ry="${s*.32}" fill="#1a0a1a" stroke="#aa44cc" stroke-width="1"/><rect x="${s*.35}" y="${s*.2}" width="${s*.1}" height="${s*.06}" rx="1" fill="#cc44ff"/><rect x="${s*.55}" y="${s*.2}" width="${s*.1}" height="${s*.06}" rx="1" fill="#cc44ff"/><line x1="${s*.3}" y1="${s*.35}" x2="${s*.05}" y2="${s*.15}" stroke="#661166" stroke-width="1.5"/><line x1="${s*.7}" y1="${s*.35}" x2="${s*.95}" y2="${s*.15}" stroke="#661166" stroke-width="1.5"/><line x1="${s*.28}" y1="${s*.5}" x2="${s*.05}" y2="${s*.55}" stroke="#661166" stroke-width="1.5"/><line x1="${s*.72}" y1="${s*.5}" x2="${s*.95}" y2="${s*.55}" stroke="#661166" stroke-width="1.5"/>`}
+  el.innerHTML=svg;
+}
+// Update emoji icons to SVG robots in mission cards
+const origRenderHome=renderHome;
+renderHome=function(){origRenderHome();
+  // Draw SVG robots on mission cards & add TTS to Optimus
+  Object.keys(TOPICS).forEach(k=>{const el=document.getElementById('m-'+k);/* future: replace emoji with SVG */});
+}
+
+// ============================================================
+// REPORT — downloadable & shareable
+// ============================================================
+function renderReport(){
+  const d=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const subj=Object.keys(TOPICS).map(k=>`<div class="rpt-s"><div class="rpt-l">${TOPICS[k].label}</div><div class="rpt-v">${S.scores?.[k]||0}/6</div></div>`).join('');
+  document.getElementById('rpt-content').innerHTML=`<div style="font-family:Orbitron;font-size:12px;color:var(--blue);letter-spacing:2px;margin-bottom:6px">AUTOBOT ACADEMY REPORT</div><div style="font-size:12px;color:var(--txt2)">${d}</div><div class="rpt-grid"><div class="rpt-s"><div class="rpt-l">Battles</div><div class="rpt-v">${S.tc}</div></div><div class="rpt-s"><div class="rpt-l">Correct</div><div class="rpt-v">${S.co}</div></div><div class="rpt-s"><div class="rpt-l">Streak</div><div class="rpt-v">${S.sk}</div></div><div class="rpt-s"><div class="rpt-l">Level</div><div class="rpt-v">${S.level||1}</div></div></div><div style="font-family:Orbitron;font-size:9px;color:var(--txt3);letter-spacing:1.5px;margin:12px 0 6px">BEST BY SUBJECT</div><div class="rpt-grid">${subj}</div><div style="font-family:Orbitron;font-size:9px;color:var(--txt3);letter-spacing:1.5px;margin:12px 0 6px">BADGES: ${S.eb.length}/${BADGES.length}</div><div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap">${BADGES.filter(b=>S.eb.includes(b.id)).map(b=>`<span style="font-size:20px">${b.icon}</span>`).join('')||'<span style="font-size:11px;color:var(--txt3)">None yet</span>'}</div><div style="margin-top:10px;font-size:10px;color:var(--txt3);line-height:1.6">KS2 National Curriculum • Year 5/6 SATs</div>`;
+}
+function downloadReport(){
+  const d=new Date().toLocaleDateString('en-GB');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AutoBot Academy Report</title><style>body{font-family:Arial,sans-serif;padding:40px;max-width:600px;margin:0 auto;color:#222}h1{color:#0077cc;font-size:22px;border-bottom:3px solid #0077cc;padding-bottom:8px}h2{color:#555;font-size:14px;text-transform:uppercase;letter-spacing:2px;margin-top:20px}.g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.s{background:#f0f4f8;border-radius:8px;padding:12px}.sl{font-size:11px;color:#666;text-transform:uppercase}.sv{font-size:24px;font-weight:bold;color:#0077cc}.ft{margin-top:20px;font-size:11px;color:#999;border-top:1px solid #ddd;padding-top:10px}</style></head><body><h1>🤖 AutoBot Academy — Progress Report</h1><p style="color:#666">${d}</p><h2>Performance</h2><div class="g"><div class="s"><div class="sl">Battles</div><div class="sv">${S.tc}</div></div><div class="s"><div class="sl">Correct</div><div class="sv">${S.co}</div></div><div class="s"><div class="sl">Streak</div><div class="sv">${S.sk}</div></div><div class="s"><div class="sl">Level</div><div class="sv">${S.level||1}</div></div></div><h2>By Subject</h2><div class="g">${Object.keys(TOPICS).map(k=>`<div class="s"><div class="sl">${TOPICS[k].label}</div><div class="sv">${S.scores?.[k]||0}/6</div></div>`).join('')}</div><h2>Badges (${S.eb.length}/${BADGES.length})</h2><div style="font-size:24px">${BADGES.filter(b=>S.eb.includes(b.id)).map(b=>b.icon).join(' ')||'None yet'}</div><div class="ft">AutoBot Academy • KS2 SATs • Maths, English, Science, History, Geography</div></body></html>`;
+  const blob=new Blob([html],{type:'text/html'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`AutoBot-Report-${d.replace(/\//g,'-')}.html`;a.click();URL.revokeObjectURL(a.href);
+}
+function shareReport(){
+  const txt=`🤖 AutoBot Academy Report\n📅 ${new Date().toLocaleDateString('en-GB')}\n\nBattles: ${S.tc} | Correct: ${S.co} | Streak: ${S.sk}\nLevel: ${S.level||1}\n\n${Object.keys(TOPICS).map(k=>`${TOPICS[k].icon} ${TOPICS[k].label}: ${S.scores?.[k]||0}/6`).join('\n')}\n\nBadges: ${S.eb.length}/${BADGES.length}\nKS2 SATs Prep`;
+  if(navigator.share){navigator.share({title:'AutoBot Academy Report',text:txt}).catch(()=>{})}else{navigator.clipboard.writeText(txt).then(()=>alert('Copied to clipboard!')).catch(()=>alert(txt))}
+}
+
+// ============================================================
+// INTEGRATION: Patch core functions with new features
+// ============================================================
+
+// Patch bPick to add SFX and robot hit animations
+const _origPick=bPick;
+bPick=function(i){
+  if(fbT)return;
+  const q=cQs[cIdx],ok=i===q.a;
+  // Call original
+  _origPick(i);
+  // Add SFX
+  try{if(ok)sfx('correct');else sfx('wrong')}catch(e){}
+};
+
+// Patch finishBattle to track per-subject scores
+const _origFinish=finishBattle;
+finishBattle=function(){
+  _origFinish();
+  // Save best score per subject
+  S.scores=S.scores||{};
+  S.scores[cKey]=Math.max(S.scores[cKey]||0,cScore);
+  saveS(S);
+  // Victory SFX
+  if(cScore>=3)try{sfx('victory')}catch(e){}
+};
+
+// Patch go() to handle report screen
+const _origGo=go;
+go=function(id){_origGo(id);if(id==='report')renderReport()};
+
+// Patch renderBQ to add TTS buttons and syllable colouring to questions
+const _origRenderBQ=renderBQ;
+renderBQ=function(){
+  _origRenderBQ();
+  // Add TTS read button after question text
+  const qtxt=document.getElementById('b-txt');
+  if(qtxt){
+    const plainText=qtxt.textContent;
+    // Apply syllable colouring to long words
+    qtxt.innerHTML=colourText(qtxt.textContent);
+    // Add TTS button row
+    const ttsRow=document.createElement('div');
+    ttsRow.style.cssText='text-align:center;margin:-10px 0 12px';
+    ttsRow.innerHTML=`<button class="tts" onclick="tts('${plainText.replace(/'/g,"\\'")}')">🔊</button>`;
+    qtxt.parentNode.insertBefore(ttsRow,qtxt.nextSibling);
+  }
+  // Add TTS to each option
+  document.querySelectorAll('.obtn').forEach(btn=>{
+    const text=btn.textContent.replace(/^[A-D]/,'').trim();
+    const ttsBtn=document.createElement('button');
+    ttsBtn.className='tts';ttsBtn.style.marginLeft='auto';
+    ttsBtn.textContent='🔊';
+    ttsBtn.onclick=function(e){e.stopPropagation();tts(text)};
+    btn.appendChild(ttsBtn);
+  });
+};
+
+// Patch home messages to add TTS
+const _origRenderHome=renderHome;
+renderHome=function(){
+  _origRenderHome();
+  const msgEl=document.getElementById('home-msg');
+  if(msgEl&&!document.getElementById('home-tts')){
+    const btn=document.createElement('button');
+    btn.className='tts';btn.id='home-tts';btn.textContent='🔊';
+    btn.style.marginTop='6px';
+    btn.onclick=function(){tts(msgEl.textContent)};
+    msgEl.parentNode.appendChild(btn);
+  }
+};
+
+// Patch teach screen to add TTS
+const _origGoTeach=goTeach;
+goTeach=function(k){
+  _origGoTeach(k);
+  const msgEl=document.getElementById('teach-msg');
+  if(msgEl&&!document.getElementById('teach-tts')){
+    const btn=document.createElement('button');
+    btn.className='tts';btn.id='teach-tts';btn.textContent='🔊';
+    btn.style.marginTop='6px';
+    btn.onclick=function(){tts(msgEl.textContent)};
+    msgEl.parentNode.appendChild(btn);
+  }
+};
+
+// Patch result screen TTS
+const _origFinish2=finishBattle;
+
+// Patch breathe to add TTS
+const _origBreathe=showBreathe;
+showBreathe=function(ctx){
+  _origBreathe(ctx);
+  const msgEl=document.getElementById('br-msg');
+  if(msgEl){tts(msgEl.textContent)}
+};
+
+// INIT
+S=loadS();mkParticles();renderHome();
 </script>
 </body>
 </html>
